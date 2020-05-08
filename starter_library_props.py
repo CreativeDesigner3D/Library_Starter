@@ -25,8 +25,8 @@ class Starter_Library_Scene_Props(PropertyGroup):
 
     library_bool: BoolProperty(name="Bool")
     library_float: FloatProperty(name="Float")
-    library_string: StringProperty(name="Float")
-    library_int: IntProperty(name="Float")
+    library_string: StringProperty(name="String")
+    library_int: IntProperty(name="Int")
 
     @classmethod
     def register(cls):

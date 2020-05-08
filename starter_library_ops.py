@@ -27,6 +27,7 @@ class starter_library_OT_activate(Operator):
     def execute(self, context):
         #Code to initalize library goes here
         #This can be left blank
+        print('Activate Starter Library:',self.library_name)
         path = starter_library_utils.get_library_path()
         pc_utils.update_file_browser_path(context,path)
         return {'FINISHED'}
@@ -39,7 +40,7 @@ class starter_library_OT_drop(Operator):
     filepath: StringProperty(name='Library Name')
 
     def execute(self, context):
-        print('Dropping File:',self.filepath)
+        print('Drop File:',self.filepath)
         #This is called when a file is dropped with your library active
         return {'FINISHED'}
 

@@ -23,6 +23,9 @@ class FILEBROWSER_PT_starter_library_headers(bpy.types.Panel):
         row = layout.row()
         row.scale_y = 1.3
         row.label(text="Starter Library")
+        row = layout.row()
+        row.scale_y = 1.3
+        row.label(text="Library")        
 
 classes = (
     FILEBROWSER_PT_starter_library_headers,

@@ -20,15 +20,10 @@ bl_info = {
 
 @persistent
 def load_library_on_file_load(scene=None):
-    #Get PyClone Window Manager Properties
-    pyclone = pc_utils.get_wm_props(bpy.context.window_manager)
-    #Check if you library is already registered
-    if "Starter Library" not in pyclone.libraries:
-        #Add Library with Activate ID, Drop ID, and Icon
-        library = pyclone.add_library(name="Starter Library",
-                                      activate_id='starter_library.activate',
-                                      drop_id='starter_library.drop',
-                                      icon='ASSET_MANAGER')
+    pc_utils.register_library(name="Starter Library",
+                              activate_id='starter_library.activate',
+                              drop_id='starter_library.drop',
+                              icon='ASSET_MANAGER')
 
 #Standard register/unregister Function for Blender Add-ons
 def register():
@@ -36,7 +31,6 @@ def register():
     starter_library_props.register()
     starter_library_ui.register()
 
-    load_library_on_file_load()
     bpy.app.handlers.load_post.append(load_library_on_file_load)
 
 def unregister():
@@ -46,6 +40,5 @@ def unregister():
 
     bpy.app.handlers.load_post.remove(load_library_on_file_load)  
 
-    pyclone = pc_utils.get_wm_props(bpy.context.window_manager)
-    pyclone.remove_library("Starter Library")
+    pc_utils.unregister_library("Starter Library")
 

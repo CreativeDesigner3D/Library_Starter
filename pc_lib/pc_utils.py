@@ -6,6 +6,8 @@ from mathutils import Vector
 import math, random
 import bmesh
 import inspect
+# from .xml import XML
+# from .. import kitchen_utils
 
 def get_wm_props(window_manager):
     return window_manager.pyclone
@@ -71,6 +73,7 @@ def hook_vertex_group_to_object(obj_mesh,vertex_group,obj_hook):
     """
     bpy.ops.object.select_all(action = 'DESELECT')
     obj_hook.hide_set(False)
+    obj_hook.hide_viewport = False
     obj_hook.hide_select = False
     obj_hook.select_set(True)
     obj_mesh.hide_set(False)
@@ -79,13 +82,13 @@ def hook_vertex_group_to_object(obj_mesh,vertex_group,obj_hook):
         vgroup = obj_mesh.vertex_groups[vertex_group]
         obj_mesh.vertex_groups.active_index = vgroup.index
         bpy.context.view_layer.objects.active = obj_mesh
-        bpy.ops.bp_object.toggle_edit_mode(obj_name=obj_mesh.name)
+        bpy.ops.pc_object.toggle_edit_mode(obj_name=obj_mesh.name)
         bpy.ops.mesh.select_all(action = 'DESELECT')
         bpy.ops.object.vertex_group_select()
         if obj_mesh.data.total_vert_sel > 0:
             bpy.ops.object.hook_add_selob()
         bpy.ops.mesh.select_all(action = 'DESELECT')
-        bpy.ops.bp_object.toggle_edit_mode(obj_name=obj_mesh.name)
+        bpy.ops.pc_object.toggle_edit_mode(obj_name=obj_mesh.name)
 
 def apply_hook_modifiers(context,obj):
     """ This function applies all of the hook modifers on an object
@@ -348,4 +351,16 @@ def update_file_browser_path(context,path):
                         params.use_filter_font = False
                         params.use_filter_folder = False
                         params.use_filter_blender = False
-                        params.use_filter_image = True    
+                        params.use_filter_image = True  
+
+def register_library(name,activate_id,drop_id,icon):
+    pyclone = get_wm_props(bpy.context.window_manager)
+    if name not in pyclone.libraries:
+        pyclone.add_library(name=name,
+                            activate_id=activate_id,
+                            drop_id=drop_id,
+                            icon=icon)
+
+def unregister_library(name):
+    pyclone = get_wm_props(bpy.context.window_manager)
+    pyclone.remove_library(name)

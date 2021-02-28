@@ -123,6 +123,16 @@ def delete_obj_list(obj_list):
     for obj in obj_list:
         bpy.data.objects.remove(obj,do_unlink=True)
 
+def select_obj_list(obj_list):
+    ''' 
+    This function selects every object in the list
+    '''
+    for obj in obj_list:
+        if obj.type != 'EMPTY' and obj.hide_render == False and obj.name in bpy.context.view_layer.objects:
+            obj.hide_select = False
+            obj.hide_viewport = False
+            obj.select_set(True)
+
 def delete_object_and_children(obj_bp):
     '''
     Deletes a object and all it's children
@@ -138,6 +148,22 @@ def delete_object_and_children(obj_bp):
         else:
             obj_list.append(child)
     delete_obj_list(obj_list)
+
+def select_object_and_children(obj_bp):
+    '''
+    Selects an object and all it's children
+
+    ARGS
+    obj_bp (bpy.types.Object) - Parent Object to Select
+    '''
+    obj_list = []
+    obj_list.append(obj_bp)
+    for child in obj_bp.children:
+        if len(child.children) > 0:
+            select_object_and_children(child)
+        else:
+            obj_list.append(child)
+    select_obj_list(obj_list)
 
 def create_cube_mesh(name,size):
     
@@ -250,12 +276,11 @@ def get_selection_point(context, event, ray_max=10000.0,objects=None,floor=None,
     region = context.region
     rv3d = context.region_data
     coord = event.mouse_region_x, event.mouse_region_y
-
     # get the ray from the viewport and mouse
     view_vector = view3d_utils.region_2d_to_vector_3d(region, rv3d, coord)
     ray_origin = view3d_utils.region_2d_to_origin_3d(region, rv3d, coord)
     ray_target = ray_origin + view_vector
- 
+
     def visible_objects_and_duplis():
         """Loop over (object, matrix) pairs (mesh only)"""
  
@@ -270,19 +295,9 @@ def get_selection_point(context, event, ray_max=10000.0,objects=None,floor=None,
                     if floor is not None and obj == floor:
                         yield (obj, obj.matrix_world.copy())
                          
-    #                 if obj.draw_type != 'WIRE':
                     if obj.type == 'MESH' and obj.hide_select == False:
                         yield (obj, obj.matrix_world.copy())
     
-                    if obj.instance_type != 'NONE':
-                        obj.dupli_list_create(scene)
-                        for dob in obj.dupli_list:
-                            obj_dupli = dob.object
-                            if obj_dupli.type == 'MESH':
-                                yield (obj_dupli, dob.matrix.copy())
- 
-            # obj.dupli_list_clear()
- 
     def obj_ray_cast(obj, matrix):
         """Wrapper for ray casting that moves the ray into object space"""
         try:
@@ -294,7 +309,6 @@ def get_selection_point(context, event, ray_max=10000.0,objects=None,floor=None,
      
             # cast the ray
             success, location, normal, face_index = obj.ray_cast(ray_origin_obj, ray_direction_obj)
-     
             if success:
                 return location, normal, face_index
             else:
@@ -309,6 +323,7 @@ def get_selection_point(context, event, ray_max=10000.0,objects=None,floor=None,
     for obj, matrix in visible_objects_and_duplis():
         if obj.type == 'MESH':
             if obj.data:
+                
                 hit, normal, face_index = obj_ray_cast(obj, matrix)
                 if hit is not None:
                     hit_world = matrix @ hit

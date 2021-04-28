@@ -28,6 +28,14 @@ class Starter_Library_Scene_Props(PropertyGroup):
     library_string: StringProperty(name="String")
     library_int: IntProperty(name="Int")
 
+    def draw_filebrowser_header(self,layout,context):
+        row = layout.row()
+        row.scale_y = 1.3
+        row.label(text="Starter Library")
+        row = layout.row()
+        row.scale_y = 1.3
+        row.label(text="Library")   
+
     @classmethod
     def register(cls):
         bpy.types.Scene.starter_library = PointerProperty(

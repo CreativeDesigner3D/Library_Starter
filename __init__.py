@@ -23,6 +23,7 @@ def load_library_on_file_load(scene=None):
     pc_utils.register_library(name="Starter Library",
                               activate_id='starter_library.activate',
                               drop_id='starter_library.drop',
+                              namespace="starter_library",
                               icon='ASSET_MANAGER')
 
 #Standard register/unregister Function for Blender Add-ons
@@ -31,6 +32,7 @@ def register():
     starter_library_props.register()
     starter_library_ui.register()
 
+    load_library_on_file_load()
     bpy.app.handlers.load_post.append(load_library_on_file_load)
 
 def unregister():

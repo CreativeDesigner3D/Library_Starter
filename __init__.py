@@ -36,11 +36,13 @@ def register():
     bpy.app.handlers.load_post.append(load_library_on_file_load)
 
 def unregister():
-    starter_library_ops.unregister()
-    starter_library_props.unregister()
-    starter_library_ui.unregister()
+    try:
+        starter_library_ops.unregister()
+        starter_library_props.unregister()
+        starter_library_ui.unregister()
 
-    bpy.app.handlers.load_post.remove(load_library_on_file_load)  
+        bpy.app.handlers.load_post.remove(load_library_on_file_load)  
 
-    pc_utils.unregister_library("Starter Library")
-
+        pc_utils.unregister_library("Starter Library")
+    except:
+        pass
